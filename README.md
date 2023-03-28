@@ -5,7 +5,7 @@
 This project is an experiment where we make two rings with the same number of stages but measure how their frequency differs.  
 As we can enable one at a time or both we can also measure if they can influence eachother. 
 
-![Ring OSC Speed Test Block Diagram](relative%20pic/tt_speed_test.jpg?raw=true "High Level Block Diagram")
+![Ring OSC Speed Test Block Diagram](https://github.com/ericsmi/tt02-verilog-ring-osc-demo/blob/main/pic/tt_speed_test.jpg?raw=true)
 
 # How it works
 
