@@ -15,7 +15,9 @@ reg rclk,rpass;
 assign pass_flag = rpass;
 
 int period;
-initial period = dclk_period;
+//initial period = dclk_period;
+initial period = 1000; // make sure this is the same as test.py
+                       // not sure why this variable pass failed
 
 reg nrst,trig;
 reg [1:0] ring_en;
@@ -89,7 +91,7 @@ initial begin
          $display("ERROR: smoke_test: out[7] is not set");
          $finish;
       end
-      $display("PASS: smoke_test");
+      $display("PASS: smoke_test, out[7] changed state");
    end
 
    if (1 == run_measurement) begin
@@ -160,6 +162,7 @@ initial begin
     count1[23:16] = out[7:0];
 
     // calculation assumes timescale = 1nS
+    $display("period : %d nS",period);
     $display("count0 : %x (%6d) freq0: %.3f MHz",count0[23:0],(24'hFFFFFF-count0[23:0]),(24'hFFFFFF-count0[23:0])*1000.0/period);
     $display("count1 : %x (%6d) freq1: %.3f MHz",count1[23:0],(24'hFFFFFF-count1[23:0]),(24'hFFFFFF-count1[23:0])*1000.0/period);
 

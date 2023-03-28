@@ -2,12 +2,25 @@
 
 //`define COCOTB_SIM
 
+`ifdef COCOTB_SIM
+module tt02_beh_dffr #(parameter R=0) (input clk,rst,d,en, output q);
+    wire b;
+    reg rq;
+    assign b = en ? d : rq;
+    always @(posedge clk or posedge rst)
+    begin
+        if(rst) 
+           rq <= R;
+        else 
+           rq <= b;
+    end
+    assign #0.1 q = rq;
+endmodule
+`endif
+
 module rdffe(input clk,d,en,rst, output q);
   `ifdef COCOTB_SIM
-    reg rq;
-    assign #0.1 q = rq;
-    always @(posedge clk or posedge rst)
-      rq <= rst ? 1'b0 : ( en ? d : q);
+    tt02_beh_dffr #(.R(0)) bdfrtp (.clk(clk),.rst(rst),.d(d),.en(en),.q(q));
   `else
     wire b;
     assign b = en ? d : q;
@@ -22,10 +35,7 @@ endmodule
 
 module sdffe(input clk,d,en,pre, output q);
   `ifdef COCOTB_SIM 
-    reg rq;
-    assign #0.1 q = rq;
-    always @(posedge clk or posedge pre)
-      rq <= pre ? 1'b1 : ( en ? d : q);
+    tt02_beh_dffr #(.R(1)) bdfstp (.clk(clk),.rst(pre),.d(d),.en(en),.q(q));
   `else
     wire b;
     assign b = en ? d : q;
@@ -100,11 +110,19 @@ module  ring_with_counter #(parameter WIDTH=24) (input nrst, ring_en, count_en, 
 
   // Count down toward zero from (signed)-1
 
+  // The structure below is known as an asynchronous counter.  
+  // It simple and doesn't use much area but has some disadvantages.
+
+  // Here we let the measurement stop and keep the clock running before reading the count.  
+  // This is the equivalent of a multicycle path from the count to the io_out mux, therefore timing is safe. 
+
+  // See more here: https://www.allaboutcircuits.com/textbook/digital/chpt-11/asynchronous-counters/
+
   assign value[0] = nosc_buf;
 
   generate
-		for (i = 1; i < WIDTH; i = i + 1) 
-          sdffe dcg(.clk(value[i-1]),.pre(rst),.en(count_en_s1),.d(~value[i]),.q(value[i]));
+    for (i = 1; i < WIDTH; i = i + 1) 
+       sdffe dcg(.clk(value[i-1]),.pre(rst),.en(count_en_s1),.d(~value[i]),.q(value[i]));
   endgenerate
 
   // value[WIDTH] is the overflow bit.  Make it sticky.  

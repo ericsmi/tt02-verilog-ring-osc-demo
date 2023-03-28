@@ -1,5 +1,16 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
+# Ring OSC Speed Test for Tiny Tapeout
+
+This project is an experiment where we make two rings with the same number of stages but measure how their frequency differs.  
+As we can enable one at a time or both we can also measure if they can influence eachother. 
+
+![Ring OSC Speed Test Block Diagram](relative%20pic/tt_speed_test.jpg?raw=true "High Level Block Diagram")
+
+# How it works
+
+With the clock running, after reset, assert trigger.  Counter will keep track of number of ring positive edges. This can be used to infer the average number of ring periods inside one scan clock period.  Use sel bits to get result
+
 # What is Tiny Tapeout?
 
 TinyTapeout is an educational project that aims to make it easier and cheaper than ever to get your digital designs manufactured on a real chip!
